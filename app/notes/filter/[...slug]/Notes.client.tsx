@@ -2,83 +2,66 @@
 
 'use client';
 
-import Link from 'next/link';
-
 import { useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 import { useQuery } from '@tanstack/react-query';
-
 import { fetchNotes } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
 
-import SearchBox from '@/components/SearchBox/SearchBox';
-import Pagination from '@/components/Pagination/Pagination';
 import NoteList from '@/components/NoteList/NoteList';
-import Modal from '@/components/Modal/Modal';
-import NoteForm from '@/components/NoteForm/NoteForm';
+import Pagination from '@/components/Pagination/Pagination';
+import SearchBox from '@/components/SearchBox/SearchBox';
+
+import Link from 'next/link';
 
 interface Props {
     tag: NoteTag | 'all';
 }
 
 export default function NotesClient({ tag }: Props) {
-    // 🔥 СТАНИ
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // 🔥 DEBOUNCE
-    const handleSearch = useDebouncedCallback((value: string) => {
-        setSearch(value);
-        setPage(1);
-    }, 300);
-
-    // 🔥 QUERY
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['notes', page, search, tag],
+        queryKey: ['notes', tag, page, search],
         queryFn: () =>
             fetchNotes({
                 page,
                 search,
                 tag,
             }),
-        placeholderData: (prev) => prev,
     });
 
-    // 🔥 ОБРОБНИКИ
-    const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const handlePageChange = (selectedPage: number) => {
+        setPage(selectedPage);
+    };
+
+    const handleSearch = (value: string) => {
+        setSearch(value);
+        setPage(1);
+    };
 
     if (isLoading) return <p>Loading...</p>;
     if (isError || !data) return <p>Error loading notes</p>;
 
     return (
         <div>
-            {/* 🔍 SEARCH */}
+
+            <Link href="/notes/action/create">
+                <button>Create note</button>
+            </Link>
+
+
             <SearchBox onSearch={handleSearch} />
 
 
-            <Link href="/notes/action/create">Create note</Link>
-
-            {/* ➕ BUTTON
-            <button onClick={openModal}>Create note</button> */}
-
-            {/* 📝 LIST */}
             <NoteList notes={data.notes} />
 
-            {/* 📄 PAGINATION */}
-            <Pagination
-                currentPage={page}
-                totalPages={data.totalPages}
-                onPageChange={setPage}
-            />
 
-            {/* 🪟 MODAL */}
-            {isModalOpen && (
-                <Modal onClose={closeModal}>
-                    <NoteForm />
-                </Modal>
-            )}
+            <Pagination
+                totalPages={data.totalPages}
+                currentPage={page}
+                onPageChange={handlePageChange}
+            />
         </div>
     );
 }

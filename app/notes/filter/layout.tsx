@@ -1,3 +1,5 @@
+import './layout.module.css';
+
 export default function FilterLayout({
     children,
     sidebar,

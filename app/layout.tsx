@@ -1,9 +1,13 @@
 
-import type { ReactNode } from 'react';
+
+import type { Metadata } from 'next';
+import { Roboto } from 'next/font/google';
+
+import './globals.css';
+
 import Header from '@/components/Header/Header';
 import Footer from '@/components/Footer/Footer';
 import TanStackProvider from '@/components/TanStackProvider/TanStackProvider';
-import { Roboto } from 'next/font/google';
 
 const roboto = Roboto({
   subsets: ['latin'],
@@ -13,7 +17,7 @@ const roboto = Roboto({
 });
 
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'NoteHub',
   description: 'Manage your notes easily',
   openGraph: {
@@ -23,30 +27,33 @@ export const metadata = {
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'NoteHub',
       },
     ],
   },
 };
 
-
 export default function RootLayout({
   children,
   modal,
 }: {
-  children: ReactNode;
-  modal: ReactNode; // ✅ ДОДАЛИ
+  children: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <html lang="en">
-      <body>
+
+      <body className={roboto.variable}>
         <TanStackProvider>
           <Header />
           {children}
           <Footer />
-
-          {/* 🔥 ВАЖЛИВО */}
           {modal}
         </TanStackProvider>
+
+        {/* modal portal */}
         <div id="modal-root"></div>
       </body>
     </html>
