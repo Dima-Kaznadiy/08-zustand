@@ -2,6 +2,8 @@
 
 'use client';
 
+import Link from 'next/link';
+
 import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { useQuery } from '@tanstack/react-query';
@@ -55,8 +57,11 @@ export default function NotesClient({ tag }: Props) {
             {/* 🔍 SEARCH */}
             <SearchBox onSearch={handleSearch} />
 
-            {/* ➕ BUTTON */}
-            <button onClick={openModal}>Create note</button>
+
+            <Link href="/notes/action/create">Create note</Link>
+
+            {/* ➕ BUTTON
+            <button onClick={openModal}>Create note</button> */}
 
             {/* 📝 LIST */}
             <NoteList notes={data.notes} />
@@ -71,7 +76,7 @@ export default function NotesClient({ tag }: Props) {
             {/* 🪟 MODAL */}
             {isModalOpen && (
                 <Modal onClose={closeModal}>
-                    <NoteForm onClose={closeModal} />
+                    <NoteForm />
                 </Modal>
             )}
         </div>

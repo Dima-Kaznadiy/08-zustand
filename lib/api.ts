@@ -5,12 +5,19 @@ const BASE_URL = 'https://notehub-public.goit.study/api';
 
 const token = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
-const instance = axios.create({
-    baseURL: BASE_URL,
+export const instance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
     headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_API_KEY}`,
     },
 });
+
+// const instance = axios.create({
+//     baseURL: BASE_URL,
+//     headers: {
+//         Authorization: `Bearer ${token}`,
+//     },
+// });
 
 
 export interface FetchNotesResponse {
