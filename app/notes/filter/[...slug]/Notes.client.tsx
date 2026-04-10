@@ -1,8 +1,10 @@
 
 
+
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
 import type { NoteTag } from '@/types/note';
@@ -21,12 +23,24 @@ export default function NotesClient({ tag }: Props) {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
 
+
+    const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPage(1);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [search]);
+
     const { data, isLoading, isError } = useQuery({
-        queryKey: ['notes', tag, page, search],
+        queryKey: ['notes', tag, page, debouncedSearch],
         queryFn: () =>
             fetchNotes({
                 page,
-                search,
+                search: debouncedSearch,
                 tag,
             }),
     });
@@ -37,7 +51,6 @@ export default function NotesClient({ tag }: Props) {
 
     const handleSearch = (value: string) => {
         setSearch(value);
-        setPage(1);
     };
 
     if (isLoading) return <p>Loading...</p>;
