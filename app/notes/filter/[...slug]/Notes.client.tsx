@@ -67,7 +67,11 @@ export default function NotesClient({ tag }: Props) {
             <SearchBox onSearch={handleSearch} />
 
 
-            <NoteList notes={data.notes} />
+            {data.notes?.length ? (
+                <NoteList notes={data.notes} />
+            ) : (
+                <p>No notes found</p>
+            )}
 
 
             <Pagination
